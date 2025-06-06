@@ -1,0 +1,56 @@
+# Raspberry PI OS config.toml
+# This file is used for the initial setup of the system on the first boot, if
+# it's s present in the boot partition of the installation.
+#
+# This file is loaded by firstboot, parsed by init_config and ends up
+# as several calls to imager_custom.
+# The example below has all current fields.
+#
+# References:
+# - https://github.com/RPi-Distro/raspberrypi-sys-mods/blob/master/usr/lib/raspberrypi-sys-mods/firstboot
+# - https://github.com/RPi-Distro/raspberrypi-sys-mods/blob/master/usr/lib/raspberrypi-sys-mods/init_config
+# - https://github.com/RPi-Distro/raspberrypi-sys-mods/blob/master/usr/lib/raspberrypi-sys-mods/imager_custom
+#
+# Example:
+# - https://gist.github.com/lpenz/ef21bb38a7aa12ebde17fa719a8546b5
+#
+
+# check fingerprint hostkey
+# ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub
+# ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub
+
+# Required:
+config_version = 1
+
+[system]
+hostname = "pi01"
+
+[user]
+# If present, the default "rpi" user gets renamed to this "name"
+name = "flord"
+# The password can be encrypted or plain. To encrypt, we can use "openssl passwd -5 geheim"
+password = "$5$aLduHsNWDMolSXR5$DiqsbY1p7rM4IxtErDryco9.r4gCt/sr/P7j6ThIVH6"
+password_encrypted = true
+
+[ssh]
+# ssh_import_id = "gh:user" # import public keys from github
+enabled = true
+#password_authentication = false
+# We can also seed the ssh public keys configured for the default user:
+# authorized_keys = [ "ssh-rsa ... user@host", ... ]
+# authorized_keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII7WhuYC7AR+r0NReq+Xo6q26+4U3Pr5VA8hZrKl2VAk steiner@hpe" ]
+
+[wlan]
+ssid = "A1-247FDB"
+##password = "$5$P.lcR8ys7b5v.06B$gci6fBhzSefuZ8IobZw9Decr.xum/5JPozqhGv2Ppw5"
+##password_encrypted = true
+password = "4K5Q5A87HA"
+password_encrypted = false
+hidden = false
+## The country is written to /etc/default/crda
+## Reference: https://wireless.wiki.kernel.org/en/developers/Regulatory
+country = "AT"
+
+[locale]
+keymap = "at"
+timezone = "Europe/Vienna"
