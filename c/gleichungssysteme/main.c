@@ -81,6 +81,21 @@ int multipliziereMatrizen (double matrixA[][MAX_SPALTEN], double matrixB[][MAX_S
   return 0; //ok
 }
 
+double berechneDeterminante (double matrix[][MAX_SPALTEN], int size) {
+  double det;
+  
+  
+
+  return det;
+}
+
+int invertiereMatrix (double matrix[][MAX_SPALTEN], int zeilen, int spalten) {
+  if (zeilen != spalten) {
+    return 1; //Matrix ist nicht quadratisch
+  }
+  
+}
+
 int main () {
     int zeilenC;
     int spaltenC;
