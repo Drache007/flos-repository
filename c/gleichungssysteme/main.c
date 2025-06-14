@@ -81,17 +81,47 @@ int multipliziereMatrizen (double matrixA[][MAX_SPALTEN], double matrixB[][MAX_S
   return 0; //ok
 }
 
-double berechneDeterminante (double matrix[][MAX_SPALTEN], int size) {
-  double det;
-  
-  
-
-  return det;
+double berechneDeterminante (double matrix[][MAX_SPALTEN], int groesse) {
+  if (groesse == 1) {
+    return matrix[0][0];
+  }
+  if (groesse == 2) {
+    return matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1];
+  }
+  //Entwicklungssatz nach Laplace
+  //  es wird immer nach der ersten Spalte entwickelt
+  double determinante = 0;
+  int vorzeichen = 1;
+  for (int i = 0; i < groesse; i++) {
+    vorzeichen *= -1;
+    //Submatrix erstellen
+    double submatrix[MAX_SPALTEN][MAX_SPALTEN];
+    int check = 0;
+    for (int sze = 0; sze < groesse; sze++) {
+      for (int ssp = 0; ssp < (groesse - 1); ssp++) {
+        if (check == (groesse - 1)) {
+          submatrix[sze - 1][ssp] = matrix[sze][ssp + 1];
+        } else if (sze != i) {
+          submatrix[sze][ssp] = matrix[sze][ssp + 1];
+        } else if (sze == i) {
+          check++;
+        }
+      }
+    }
+    //Test
+    //gibMatrixAus(groesse - 1, submatrix);
+    determinante += vorzeichen * matrix[i][0] * berechneDeterminante(submatrix, groesse - 1);
+  }
+  return determinante;
 }
 
 int invertiereMatrix (double matrix[][MAX_SPALTEN], int zeilen, int spalten) {
   if (zeilen != spalten) {
     return 1; //Matrix ist nicht quadratisch
+  }
+  double det = berechneDeterminante(matrix, zeilen);
+  if (det == 0) {
+    return 2; //Matrix ist nicht invertierbar
   }
   
 }
