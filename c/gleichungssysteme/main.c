@@ -115,15 +115,17 @@ double berechneDeterminante (double matrix[][MAX_SPALTEN], int groesse) {
   return determinante;
 }
 
-int invertiereMatrix (double matrix[][MAX_SPALTEN], int zeilen, int spalten) {
+int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_SPALTEN], int zeilen, int spalten, int *groesse) {
   if (zeilen != spalten) {
     return 1; //Matrix ist nicht quadratisch
   }
-  double det = berechneDeterminante(matrix, zeilen);
-  if (det == 0) {
+  double determinante = berechneDeterminante(matrix, zeilen);
+  if (determinante == 0) {
     return 2; //Matrix ist nicht invertierbar
   }
-  
+  //inverseMatrix bestimmen
+
+  return 0;
 }
 
 int main () {
