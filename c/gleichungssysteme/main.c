@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define MAX_SPALTEN 10
 
@@ -115,6 +116,38 @@ double berechneDeterminante (double matrix[][MAX_SPALTEN], int groesse) {
   return determinante;
 }
 
+void erstelleKofaktormatrix(double matrix[][MAX_SPALTEN], double kofaktorMatrix[][MAX_SPALTEN], int groesse) {
+  for (int kze = 0; kze < groesse; kze++) {
+    for (int ksp = 0; ksp < groesse; ksp++) {
+      //Submatrix erstellen
+      double submatrix[MAX_SPALTEN][MAX_SPALTEN];
+      int checkZeile = 0;
+      int checkSpalte = 0;
+      for (int sze = 0; sze < groesse; sze++) {
+        for (int ssp = 0; ssp < groesse; ssp++) {
+          if (checkZeile == groesse && checkSpalte < groesse) {
+            submatrix[sze - 1][ssp] = matrix[sze][ssp];
+          } else if (checkZeile < groesse && checkSpalte == groesse) {
+            submatrix[sze][ssp - 1] = matrix[sze][ssp];
+          } else if (checkZeile == groesse && checkSpalte == groesse) {
+            submatrix[sze - 1][ssp - 1] = matrix[sze][ssp];
+          } else if (sze != kze && ssp != ksp) {
+            submatrix[sze][ssp] = matrix[sze][ssp];
+          } else {
+            if (sze == kze) {
+              checkZeile++;
+            }
+            if (ssp == ksp) {
+              checkSpalte++;
+            }
+          }
+        }
+      }
+      kofaktorMatrix[kze][ksp] = pow(-1, kze + ksp) * berechneDeterminante(submatrix, groesse - 1);
+    }
+  }
+}
+
 int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_SPALTEN], int zeilen, int spalten, int *groesse) {
   if (zeilen != spalten) {
     return 1; //Matrix ist nicht quadratisch
@@ -123,8 +156,9 @@ int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_S
   if (determinante == 0) {
     return 2; //Matrix ist nicht invertierbar
   }
-  //inverseMatrix bestimmen
-
+  //Kofaktormatrix erstellen
+  
+  
   return 0;
 }
 
@@ -132,16 +166,15 @@ int main () {
     int zeilenC;
     int spaltenC;
 
-    double matrixA[1][MAX_SPALTEN];
-    double matrixB[3][MAX_SPALTEN];
+    double matrixA[4][4];
+    double matrixB[4][4];
     double matrixC[1][MAX_SPALTEN];
 
-    getMatrix("Matrix A", 1, 3, matrixA);
-    getMatrix("Matrix B", 3, 2, matrixB);
+    getMatrix("Matrix A", 4, 4, matrixA);
+    
+    invertiereMatrix(matrixA, matrixB, 4, 4, &zeilenC);
 
-    multipliziereMatrizen(matrixA, matrixB, matrixC, 1, 3, 3, 2, &zeilenC, &spaltenC);
-
-    gibMatrixAus("MatrixC", zeilenC, spaltenC, matrixC);
+    gibMatrixAus("Matrix B", 4, 4, matrixB);
 
     return 0;
 }
