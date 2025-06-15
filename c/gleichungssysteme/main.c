@@ -7,6 +7,16 @@
 
 //feld[zeilen][spalten]
 
+int getInt (char text[], int min, int max) {
+  char s[100];
+  int z;
+  do {
+    printf("%s: ", text);
+    fgets(s, sizeof s, stdin);
+  } while (sscanf(s, "%d", &z) != 1 || z < min || z > max);
+  return z;
+}
+
 double getDouble (char text[]) {
   char s[100];
   double z;
@@ -115,16 +125,16 @@ double berechneDeterminante (double matrix[][MAX_SPALTEN], int groesse) {
 }
 
 void getSubmatrix(double src[][MAX_SPALTEN], double dest[][MAX_SPALTEN], int groesse, int row, int col) {
-    int r = 0, c = 0;
-    for (int i = 0; i < groesse; i++) {
-        if (i == row) continue;
-        c = 0;
-        for (int j = 0; j < groesse; j++) {
-            if (j == col) continue;
-            dest[r][c] = src[i][j];
-            c++;
-        }
-        r++;
+  int r = 0, c = 0;
+  for (int i = 0; i < groesse; i++) {
+    if (i == row) continue;
+      c = 0;
+    for (int j = 0; j < groesse; j++) {
+      if (j == col) continue;
+        dest[r][c] = src[i][j];
+        c++;
+      }
+    r++;
     }
 }
 
@@ -176,20 +186,112 @@ int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_S
   return 0;
 }
 
+void eingabeUIGleichungen (int groesse, int pos, double matrix[][MAX_SPALTEN], double ergebnisse[]) {
+  printf("Gleichungssystem:\n");
+  printf("-----------------\n\n");
+  for (int ze = 0; ze < groesse; ze++) {
+    printf("%d. Gleichung: ", ze); 
+    if (ze * groesse == 0) {
+      printf("/");
+    } else if (ze * groesse == groesse - 1) {
+      printf("\\");
+    } else {
+      printf("|");
+    }
+    for (int sp = 0; sp < groesse; sp++) {
+      if (ze * groesse + sp < pos) {
+        printf("%6.2lf", matrix[ze][sp]);
+      } else if (ze * groesse + sp == pos) {
+        printf("     x");
+      } else {
+        printf("     -");
+      }
+    }
+    if (ze * groesse == 0) {
+      printf("/   ");
+    } else if (ze * groesse == groesse - 1) {
+      printf("\\   ");
+    } else {
+      printf("|   ");
+    }
+    if (ze * groesse == 0) {
+      printf("/");
+    } else if (ze * groesse == groesse - 1) {
+      printf("\\");
+    } else {
+      printf("|");
+    }
+    printf("%6c", 'a' + ze);
+    if (ze * groesse == 0) {
+      printf("\\");
+    } else if (ze * groesse == groesse - 1) {
+      printf("/");
+    } else {
+      printf("|");
+    }
+    if (ze * groesse == groesse / 2) {
+      printf("=  ");
+    } else {
+      printf("   ");
+    }
+    if (ze * groesse == 0) {
+      printf("/");
+    } else if (ze * groesse == groesse - 1) {
+      printf("\\");
+    } else {
+      printf("|");
+    }
+    if (ze * groesse + groesse < pos) {
+      printf("%6.2lf", ergebnisse[ze]);
+    } else if (ze * groesse + groesse == pos) {
+      printf("     x");
+    } else {
+      printf("     -");
+    }
+    printf("\n\n");
+  }
+}
+
+void getGleichungssystem (double matrix[][MAX_SPALTEN], int anzahl, double ergebnisse[][1]) {
+  for (int ze = 0; ze < anzahl; ze++) {
+    for (int sp = 0; sp < anzahl; sp++) {
+      eingabeUIGleichungen(anzahl, ze * anzahl + sp, matrix, ergebnisse);
+      matrix[ze][sp] = getDouble("Zahl an x");
+      system("clear");
+    }
+  }
+  printf("\n");
+}
+
+int loeseGleichungssystem(double matrix[][MAX_SPALTEN], double ergebnisse[][1], int anzahl, double variablen[][1]) {
+  double inverseMatrix[MAX_SPALTEN][MAX_SPALTEN]; 
+  int fehler = invertiereMatrix(matrix, inverseMatrix, anzahl, anzahl);
+  if (fehler != 0) {
+    return 1; //Fehler aufgetreten
+  } 
+  fehler = multipliziereMatrizen(inverseMatrix, ergebnisse, variablen, anzahl, anzahl, anzahl, 1, NULL, NULL);
+  if (fehler != 0) {
+    return 2; //Fehler aufgetreten
+  }
+}
+
+void gibVariablenAus (double variablen[][1], int anzahl) {
+  printf("Variablen:\n");
+  printf("----------\n\n");
+  for (int i = 0; i < anzahl; i++) {
+    printf("  %c = %lf\n", 'a' + i, variablen[i][0]);
+  }
+}
+
 int main () {
-    int zeilenC;
-    int spaltenC;
-
-    double matrixA[7][7];
-    double matrixB[7][7];
-    double matrixC[1][MAX_SPALTEN];
-
-    getMatrix("Matrix A", 7, 7, matrixA);
-    
-    //printf("%lf\n", berechneDeterminante(matrixA, 3));
-    int fehler = invertiereMatrix(matrixA, matrixB, 7, 7);
-    printf("%d\n", fehler);
-    gibMatrixAus("Matrix B", 7, 7, matrixB);
-
-    return 0;
+  printf("Gleichungssysteme\n");
+  printf("-----------------\n\n");
+  int anzahl = getInt("Anzahl der Variablen", 1, MAX_SPALTEN);
+  double matrix[MAX_SPALTEN][MAX_SPALTEN];
+  double ergebnisse[MAX_SPALTEN][1];
+  double variablen[MAX_SPALTEN][1];
+  getGleichungssystem(matrix, anzahl, ergebnisse);
+  loeseGleichungssystem(matrix, ergebnisse, anzahl, variablen);
+  gibVariablenAus(variablen, anzahl);
+  return 0;
 }
