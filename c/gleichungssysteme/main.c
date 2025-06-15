@@ -109,11 +109,23 @@ double berechneDeterminante (double matrix[][MAX_SPALTEN], int groesse) {
         }
       }
     }
-    //Test
-    //gibMatrixAus(groesse - 1, submatrix);
     determinante += vorzeichen * matrix[i][0] * berechneDeterminante(submatrix, groesse - 1);
   }
   return determinante;
+}
+
+void getSubmatrix(double src[][MAX_SPALTEN], double dest[][MAX_SPALTEN], int groesse, int row, int col) {
+    int r = 0, c = 0;
+    for (int i = 0; i < groesse; i++) {
+        if (i == row) continue;
+        c = 0;
+        for (int j = 0; j < groesse; j++) {
+            if (j == col) continue;
+            dest[r][c] = src[i][j];
+            c++;
+        }
+        r++;
+    }
 }
 
 void erstelleKofaktormatrix(double matrix[][MAX_SPALTEN], double kofaktorMatrix[][MAX_SPALTEN], int groesse) {
@@ -121,43 +133,45 @@ void erstelleKofaktormatrix(double matrix[][MAX_SPALTEN], double kofaktorMatrix[
     for (int ksp = 0; ksp < groesse; ksp++) {
       //Submatrix erstellen
       double submatrix[MAX_SPALTEN][MAX_SPALTEN];
-      int checkZeile = 0;
-      int checkSpalte = 0;
-      for (int sze = 0; sze < groesse; sze++) {
-        for (int ssp = 0; ssp < groesse; ssp++) {
-          if (checkZeile == groesse && checkSpalte < groesse) {
-            submatrix[sze - 1][ssp] = matrix[sze][ssp];
-          } else if (checkZeile < groesse && checkSpalte == groesse) {
-            submatrix[sze][ssp - 1] = matrix[sze][ssp];
-          } else if (checkZeile == groesse && checkSpalte == groesse) {
-            submatrix[sze - 1][ssp - 1] = matrix[sze][ssp];
-          } else if (sze != kze && ssp != ksp) {
-            submatrix[sze][ssp] = matrix[sze][ssp];
-          } else {
-            if (sze == kze) {
-              checkZeile++;
-            }
-            if (ssp == ksp) {
-              checkSpalte++;
-            }
-          }
-        }
-      }
+      getSubmatrix(matrix, submatrix, groesse, kze, ksp);
       kofaktorMatrix[kze][ksp] = pow(-1, kze + ksp) * berechneDeterminante(submatrix, groesse - 1);
     }
   }
 }
 
-int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_SPALTEN], int zeilen, int spalten, int *groesse) {
+void transponiereMatrix (double matrix[][MAX_SPALTEN], double transponierteMatrix[][MAX_SPALTEN], int groesse) {
+  //Matrix um Hauptdiagonale spiegeln
+  for (int ze = 0; ze < groesse; ze++) {
+    for (int sp = 0; sp < groesse; sp++) {
+      transponierteMatrix[ze][sp] = matrix[sp][ze];
+    }
+  }
+}
+
+void multipliziereMatrixMitSkalar (double matrix[][MAX_SPALTEN], double ergebnis[][MAX_SPALTEN], int zeilen, int spalten, double skalar) {
+  for (int ze = 0; ze < zeilen; ze++) {
+    for (int sp = 0; sp < spalten; sp++) {
+      ergebnis[ze][sp] = matrix[ze][sp] * skalar;
+    }
+  }
+}
+
+int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_SPALTEN], int zeilen, int spalten) {
   if (zeilen != spalten) {
     return 1; //Matrix ist nicht quadratisch
   }
   double determinante = berechneDeterminante(matrix, zeilen);
-  if (determinante == 0) {
+  if (determinante == 0.00) {
     return 2; //Matrix ist nicht invertierbar
   }
   //Kofaktormatrix erstellen
-  
+  double kofaktormatrix[MAX_SPALTEN][MAX_SPALTEN];
+  erstelleKofaktormatrix(matrix, kofaktormatrix, zeilen);
+  //Matrix transponieren
+  double adjungierteMatrix[MAX_SPALTEN][MAX_SPALTEN];
+  transponiereMatrix(kofaktormatrix, adjungierteMatrix, zeilen);
+
+  multipliziereMatrixMitSkalar(adjungierteMatrix, inverseMatrix, zeilen, zeilen, -1 / determinante);
   
   return 0;
 }
@@ -166,15 +180,16 @@ int main () {
     int zeilenC;
     int spaltenC;
 
-    double matrixA[4][4];
-    double matrixB[4][4];
+    double matrixA[7][7];
+    double matrixB[7][7];
     double matrixC[1][MAX_SPALTEN];
 
-    getMatrix("Matrix A", 4, 4, matrixA);
+    getMatrix("Matrix A", 7, 7, matrixA);
     
-    invertiereMatrix(matrixA, matrixB, 4, 4, &zeilenC);
-
-    gibMatrixAus("Matrix B", 4, 4, matrixB);
+    //printf("%lf\n", berechneDeterminante(matrixA, 3));
+    int fehler = invertiereMatrix(matrixA, matrixB, 7, 7);
+    printf("%d\n", fehler);
+    gibMatrixAus("Matrix B", 7, 7, matrixB);
 
     return 0;
 }
