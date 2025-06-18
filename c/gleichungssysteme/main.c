@@ -187,19 +187,24 @@ int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_S
 }
 
 int main () {
-  int anzahl = getInt("Anzahl der Gleichungen", 1, MAX_SPALTEN);
-  double matrix[MAX_SPALTEN][MAX_SPALTEN];
-  getMatrix("Gleichungssystem", anzahl, anzahl, matrix);
-  double ergebnisse[MAX_SPALTEN][1];
-  getMatrix("Ergebnisse", anzahl, 1, ergebnisse);
-  double variablen[MAX_SPALTEN][1];
+  
+  double matrix[MAX_SPALTEN][MAX_SPALTEN] = {
+    {1, 0, -3},
+    {2, 2, 0},
+    {0, 0, -1}
+  };
+  double b[MAX_SPALTEN][MAX_SPALTEN] = {
+    {4},
+    {5},
+    {6}
+  };
   double inverseMatrix[MAX_SPALTEN][MAX_SPALTEN];
-  invertiereMatrix(matrix, inverseMatrix, anzahl, anzahl);
+  invertiereMatrix(matrix, inverseMatrix, 3, 3);
+  gibMatrixAus("Inverse Matrix", 3, 3, inverseMatrix);
   int zeilenC, spaltenC;
-  multipliziereMatrizen(inverseMatrix, ergebnisse, variablen, anzahl, anzahl, anzahl, 1, &zeilenC, &spaltenC);
-  printf("Lösung:\n");
-  for (int i = 0; i < anzahl; i++) {
-    printf("x%d = %6.2lf\n", i + 1, variablen[i][0]);
-  }
+  double x[MAX_SPALTEN][MAX_SPALTEN];
+  multipliziereMatrizen(inverseMatrix, b, x, 3, 3, 3, 1, &zeilenC, &spaltenC);
+  gibMatrixAus("Ergebnis x", zeilenC, spaltenC, x);
+  
   return 0;
 }
