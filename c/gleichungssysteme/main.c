@@ -3,7 +3,8 @@
 #include <string.h>
 #include <math.h>
 
-#define MAX_SPALTEN 10
+#define MAX_SPALTEN 20
+#define MAX_NAME_LEN 20
 
 //feld[zeilen][spalten]
 
@@ -75,14 +76,12 @@ void gibMatrixAus (char name[], int zeilen, int spalten, double matrix[][MAX_SPA
   printf("\n");
 }
 
-int multipliziereMatrizen (double matrixA[][MAX_SPALTEN], double matrixB[][MAX_SPALTEN], double matrixC[][MAX_SPALTEN], int zeilenA, int spaltenA, int zeilenB, int spaltenB, int *zeilenC, int *spaltenC) {
+int multipliziereMatrizen (double matrixA[][MAX_SPALTEN], double matrixB[][MAX_SPALTEN], double matrixC[][MAX_SPALTEN], int zeilenA, int spaltenA, int zeilenB, int spaltenB) {
   if (spaltenA != zeilenB) {
     return 1; //Keine Multiplikation möglich
   }
-  *zeilenC = zeilenA;
-  *spaltenC = spaltenB;
-  for (int zeC = 0; zeC < *zeilenC; zeC++) {
-    for (int spC = 0; spC < *spaltenC; spC++) {
+  for (int zeC = 0; zeC < zeilenA; zeC++) {
+    for (int spC = 0; spC < spaltenB; spC++) {
       matrixC[zeC][spC] = 0;
       for (int i = 0; i < spaltenA; i++) {
         matrixC[zeC][spC] += matrixA[zeC][i] * matrixB[i][spC];
@@ -186,25 +185,119 @@ int invertiereMatrix (double matrix[][MAX_SPALTEN], double inverseMatrix[][MAX_S
   return 0;
 }
 
-int main () {
-  
-  double matrix[MAX_SPALTEN][MAX_SPALTEN] = {
-    {1, 0, -3},
-    {2, 2, 0},
-    {0, 0, -1}
-  };
-  double b[MAX_SPALTEN][MAX_SPALTEN] = {
-    {4},
-    {5},
-    {6}
-  };
+void getString (char text[], char eingabe[]) {
+  printf("%s: ", text);
+  fgets(eingabe, MAX_NAME_LEN, stdin);
+}
+
+void printEingabeGleichungssystem(int groesse, double matrix[][MAX_SPALTEN], double ergebnisse[][MAX_SPALTEN], int pos, char variablen[][MAX_NAME_LEN]) {
+    printf("Gleichungssystem in Matrixschreibweise eingeben:\n");
+    printf("================================================\n\n");
+    // Kopfzeile mit Variablennamen
+    for (int sp = 0; sp < groesse; sp++) {
+        printf("%8s", variablen[sp]);
+    }
+    printf(" |%8s\n", "Ergebnis");
+    for (int ze = 0; ze < groesse; ze++) {
+        for (int sp = 0; sp < groesse; sp++) {
+            int index = ze * groesse + sp;
+            if (index < pos) {
+                printf("%8.2lf", matrix[ze][sp]);
+            } else if (index == pos) {
+                printf("%8c", 'x');
+            } else {
+                printf("%8s", "*");
+            }
+        }
+        printf(" |");
+        int ergIndex = groesse * groesse + ze;
+        if (ergIndex < pos) {
+            printf("%8.2lf", ergebnisse[ze][0]);
+        } else if (ergIndex == pos) {
+            printf("%8c", 'x');
+        } else {
+            printf("%8s", "*");
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void getGleichungssystem (int groesse, double matrix[][MAX_SPALTEN], double ergebnisse[][MAX_SPALTEN], char variablen[][MAX_NAME_LEN]) {
+  for (int i = 0; i < groesse; i++) {
+    getString("Name der Variablen", variablen[i]);
+    variablen[i][strcspn(variablen[i], "\n")] = '\0';
+  }
+  for (int ze = 0; ze < groesse; ze++) {
+    for (int sp = 0; sp < groesse; sp++) {
+      printEingabeGleichungssystem(groesse, matrix, ergebnisse, ze * groesse + sp, variablen);
+      printf("\n");
+      matrix[ze][sp] = getDouble("Zahl bei x");
+      system("clear"); //nur Linux, "cls" für Windows
+    }
+  }
+  for (int i = 0; i < groesse; i++) {
+    printEingabeGleichungssystem(groesse, matrix, ergebnisse, groesse * groesse + i, variablen);
+    printf("\n");
+    ergebnisse[i][0] = getDouble("Ergebnis der Gleichung");
+    system("clear"); //nur Linux, "cls" für Windows
+  }
+  printEingabeGleichungssystem(groesse, matrix, ergebnisse, groesse * (groesse + 1), variablen);
+  printf("\n\n");
+}
+
+int loeseGleichungssystem (int groesse, double matrix[][MAX_SPALTEN], double ergebnisse[][MAX_SPALTEN], char variblenNamen[][MAX_NAME_LEN], double variablen[][MAX_SPALTEN]) {
   double inverseMatrix[MAX_SPALTEN][MAX_SPALTEN];
-  invertiereMatrix(matrix, inverseMatrix, 3, 3);
-  gibMatrixAus("Inverse Matrix", 3, 3, inverseMatrix);
-  int zeilenC, spaltenC;
-  double x[MAX_SPALTEN][MAX_SPALTEN];
-  multipliziereMatrizen(inverseMatrix, b, x, 3, 3, 3, 1, &zeilenC, &spaltenC);
-  gibMatrixAus("Ergebnis x", zeilenC, spaltenC, x);
-  
+  int fehler = invertiereMatrix(matrix, inverseMatrix, groesse, groesse);
+  if (fehler != 0) {
+    return fehler;
+  }
+  fehler = multipliziereMatrizen(inverseMatrix, ergebnisse, variablen, groesse, groesse, groesse, 1);
+  if (fehler != 0) {
+    return 3;
+  }
+  return 0;
+}
+
+void printLoesung (int groesse, char variablenNamen[][MAX_NAME_LEN], double variablen[][MAX_SPALTEN]) {
+  printf("Lösunge:\n");
+  printf("========\n\n");
+  for (int i = 0; i < groesse; i++) {
+    printf("  %s = %.3lf\n", variablenNamen[i], variablen[i][0]);
+  }
+}
+
+int main () {
+  double matrix[MAX_SPALTEN][MAX_SPALTEN];
+  double ergebnisse[MAX_SPALTEN][MAX_SPALTEN];
+  char variablenNamen[MAX_SPALTEN][MAX_NAME_LEN];
+  double variablen[MAX_SPALTEN][MAX_SPALTEN];
+
+  printf("Lineares Gleichungssystem lösen:\n");
+  printf("================================\n\n");
+  char text[100];
+  sprintf(text, "  Anzahl der Gleichungen und Unbekannten (maximal: %d)", MAX_SPALTEN);
+  int groesse = getInt(text, 1, MAX_SPALTEN);
+  //system("clear"); //nur Linux, "cls" für Windows
+  getGleichungssystem(groesse, matrix, ergebnisse, variablenNamen);
+  int fehler = loeseGleichungssystem(groesse, matrix, ergebnisse, variablenNamen, variablen);
+  if (fehler != 0) {
+    switch (fehler) {
+      case 1: {
+        printf("Fehler: Matrix ist nicht quadratisch!");
+        return 1;
+      }
+      case 2: {
+        printf("Fehler: Matrix ist nicht invertierbar!");
+        return 2;
+      }
+      case 3: {
+        printf("Fehler beim multiplizieren!");
+        return 3;
+      }
+    }
+  }
+  printLoesung(groesse, variablenNamen, variablen);
+
   return 0;
 }
