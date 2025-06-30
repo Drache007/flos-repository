@@ -4,10 +4,10 @@ import https from 'node:https';
 
 const app = express()
 
-app.use(express.static('/home/florian/flo-self-study/web-entwicklung/mtg-mini-website'));
+app.use(express.static('/home/florian/flos-repository/web-entwicklung/mtg-mini-website'));
 
 app.get('/', (req, res) => {
-  res.sendFile('/home/florian/flo-self-study/web-entwicklung/mtg-mini-website/index.html');
+  res.sendFile('/home/florian/flos-repository/web-entwicklung/mtg-mini-website/index.html');
 })
 
 const options = {
