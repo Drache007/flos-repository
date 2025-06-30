@@ -1,5 +1,5 @@
 header {
-    position: fixed;
+    
     top: 0;
     display: block;
     width: 100%;
@@ -13,7 +13,7 @@ body {
 }
 
 main {
-    margin: 160px;
+    margin:  0 160px;
     padding: 20px 150px 50px 150px;
     background-color: lightgrey;
     font-size: 20px;
@@ -29,13 +29,54 @@ main {
 }
 
 h2 {
-    font-size: 40px;
+    font-size: 50px;
 }
 
 h3 {
-    font-size: 30px;
+    font-size: 40px;
 }
 
 h4 {
-    font-size: 24px;
+    font-size: 30px;
+}
+
+.phases li {
+    color: white;
+    background-color: blue;
+    list-style-position: inside;
+    width: 800px;
+    height: 30px;
+    padding: 10px;
+    border-radius: 20px;
+    border-color:  black;
+    border-style: solid;
+    margin: 10px;
+}
+
+.color-symbols {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 100%;
+}
+
+.color-symbols img {
+    width: 160px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+
+.color-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 100%;
+}
+
+.color-header div {
+    width: 160px;
+    text-align: center;
+    font-size: 30px;
 }
