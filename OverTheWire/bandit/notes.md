@@ -74,7 +74,7 @@ find / -size 1033c
 ### Password
 * HWasnPhtq9AVKe0dmk45nxy20cvUa6EG
 
-## Level 6
+## Level 7
 ### Objective
 Find Password in a file.
 ### Solution
@@ -86,7 +86,7 @@ find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
 ### Password
 * morbNTDkSW6jIlUc0ymOdMaLnOlFVAaj
 
-## Level 7
+## Level 8
 ### Objective
 Find Password in file with more content
 ### Solution
@@ -96,7 +96,7 @@ grep -n "millionth" data.txt
 ### Password
 * dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc
 
-## Level 8
+## Level 9
 ### Objective
 Find Password in the human readable file.
 ### Solution
@@ -106,5 +106,49 @@ sort data.txt | uniq -u
 ```
 ### Password
 * 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
+
+## Level 10
+### Objective
+Find Password in a human readable line preceeded by several "=".
+### Solution
+* get password with:
+```
+strings data.txt
+```
+### Password
+* FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
+
+## Level 11
+### Objective
+Decode the password from Rot13.
+### Solution
+* get password with:
+```
+cat data.txt | tr [A-Za-z] [N-ZA-Mn-za-m]
+```
+### Password
+* 7x16WNeHIi5YkIhWsfFIqoognUTyj9Q4
+
+## Level 12
+### Objective
+Get the password from a file tht was compressed and archived multiple times
+### Solution
+Check the filetype using the ```file``` command. Then use the suitable command from this list to decompress:  
+* for gzip compressed file:  
+```
+mv file file.gz
+gunzip file.gz
+```
+* for bzip2 compressed file:  
+```
+bunzip2 file
+```
+* for tar archive
+```
+tar -xf file
+```
+### Password
+* FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn
+
 
 
