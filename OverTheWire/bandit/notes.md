@@ -129,6 +129,7 @@ cat data.txt | tr [A-Za-z] [N-ZA-Mn-za-m]
 ### Password
 * 7x16WNeHIi5YkIhWsfFIqoognUTyj9Q4
 
+
 ## Level 12
 ### Objective
 Get the password from a file tht was compressed and archived multiple times
@@ -150,5 +151,67 @@ tar -xf file
 ### Password
 * FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn
 
+## Level 13
+### Objective
+Log into the next level using the provided key. Then get the passsword in bandit 14. 
+### Solution
+Log in with ssh, using the private key with the -i flag. 
+```
+ssh -i sshkey.private bandit14@bandit.labs.overthewire.org -p 2220
+```
+### Password
+* MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS
 
+## Level 14
+### Objective
+Send the previous password to localhost Poret 30000. 
+### Solution
+Use netcat. 
+```
+nc localhost 30000
+```
+### Password
+* 8xCjnmgoKbGLhHFAZlGE5Tmu4M2tKJQo
 
+## Level 15
+### Objective
+Send the previous password to localhost Poret 30001 using ssl encryption. 
+### Solution
+Use openssl s_client. 
+```
+openssl s_client -connect localhost:30001
+```
+### Password
+* kSkvUpMQ7lBYyCM4GBPvCvT1BfWRy0Dx
+
+## Level 16
+### Objective
+Find a server listening in a given port range and send it the previous password. 
+### Solution
+```
+nmap -sV localhost -p 31000-32000
+# wait
+openssl s_client -connect:localhost 31790 -quiet
+```
+-quiet is used so you dont get KEYUPDATE
+### Key
+[sshkey](sshkey.private)
+* remove permissions of the file and use sudo with ssh to use the key, otherwise it wont be accepted
+
+## Level 17
+### Objective
+Find the password in the changed line of the file. 
+### Solution
+```
+diff passwords.new passwords.old
+```
+### Password
+* x2gLTTjFwMOhQ8oWNbMN362QKxfRqGlO
+
+## Level 18
+### Objective
+Find the password in a file, but .bashrc logs yu out. 
+### Solution
+* send commands using ssh. ```ls``` and ```cat readme```
+### Password
+* cGWpMaKXVwDUNgPAVJbWYuGHVn9zl3j8

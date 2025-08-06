@@ -57,6 +57,7 @@ const updatedMessage = message.replace("Abend", "Morgen");
 const fruits = ["Apple", "Banana", "Orange"];
 const joinedString = fruits.join(", "); // "Apple, Banana, Orange"
 ```
+* ```concat()``` - adds the provided text, to a string. 
 ## Comparisons
 ### Operators
 |Operator|Description
@@ -151,3 +152,56 @@ const add = (a, b) => {
 }
 ```
 If a function like this only has one statement, the {}, and return keyword are optional.  
+## Arrays
+Arrays store multiple variables. 
+### Adding elements
+* ```push()``` - adds a new element at the end
+```js
+const pets = ["cat", "dog"];
+pet.push("hamster");
+```
+* push returns the new length of the array. 
+* It can add multiple elements. 
+### Removing elements
+* pop() removes the last element of the array and returns the removed element. 
+* ```splice()``` - can add, remove and replace elements of an array, and returns an array with the removed elements. 
+```js
+array.splice(startIndex, deleteCount, item1, item2, ...);
+```
+* parameters after **startIndex** and **deleteCount** are optional. 
+### Slice()
+```js
+array.slice(startIndex, endIndex);
+```
+* returns a copy of a part of the array and doesn't modify the original array
+## Loops
+### While
+```js
+while (condition) {
+  //code
+}
+```
+### For
+```js
+for (initialization; condition; increment/decrement) {
+  // code
+}
+```
+### Map()
+* goes over every element of the new array and applys a function on each element. It returns a new array with the results. It doesn't change the original array. 
+```js
+const array = [1, 2, 3];
+
+const arrayNew = array.map((arrayValue) => {
+  return arrayValue + 1;
+});
+```
+### Filter()
+* This works similar to map, but the provided function is used as a filter. It returns an array with every element that gets **true** returned from the function. It doesn't change the original array. 
+```js
+const = [1, 2, 5, -1];
+
+const arrayPositive = array.filter((arrayValue) => {
+  return arrayValue >= 0;
+});
+```
