@@ -123,17 +123,19 @@ function checkGameOver(activePlayer) {
         }
     }
     // check for tie
-    let counter = 0;
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (board[i][j] == " ") {
-                counter++;
+    if (!gameOver) {
+        let counter = 0;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (board[i][j] == " ") {
+                    counter++;
+                }
             }
         }
-    }
-    if (counter == 0) {
-        gameOver = true;
-        checkDraw = true;
+        if (counter == 0) {
+            gameOver = true;
+            checkDraw = true;
+        }
     }
     //update Scores
     if (gameOver) {
@@ -157,17 +159,23 @@ function checkGameOver(activePlayer) {
         if (board[0][2] == board[1][1] && board[0][2] == board[2][0] && board[0][2] != " ") {
             winner = board[0][2];
         }
-        if (winner == playerSymbol) {
+        if (!checkDraw && winner == playerSymbol) {
             playerScore++;
         }
-        if (winner == computerSymbol) {
+        if (!checkDraw && winner == computerSymbol) {
             computerScore++;
         }
         checkDraw = false;
+        // write Out Scores
+        document.getElementById("playerScore").innerText = "Your Score: " + playerScore.toString();
+        document.getElementById("computerScore").innerText = "Computer Score: " + computerScore.toString();
+        setTimeout(function() {
+            removeBoard();
+            initializeGame();
+            return true;
+        }, 2000);
     }
-    // write Out Scores
-    document.getElementById("playerScore").innerText = "Your Score: " + playerScore.toString();
-    document.getElementById("computerScore").innerText = "Computer Score: " + computerScore.toString();
+    return false;
 }
 
 function removeBoard() {
